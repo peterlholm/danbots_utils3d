@@ -35,6 +35,8 @@ def diff_pic(img1, img2):
         pyplot.show()
     return n
 
+    
+
 def show_diff(fil1,fil2):
     img1 = Image.open(fil1)
     img2 = Image.open(fil1)
@@ -61,16 +63,58 @@ def show_diff(fil1,fil2):
 def show_pic_diff(file1, file2):
     "Show picture wit difference in pictures"
     img1 = Image.open(file1)
-    print("Image1 format", img1.format, img1.size, img1.mode)
-    print("absimg1 max", np.max(img1), "min", np.min(img1))
-    print("Background (0,0)", img1.getpixel((0,0)))
+    #print("Image1 format", img1.format, img1.size, img1.mode)
+    print(f"Img1 max {np.max(img1)}, min {np.min(img1)} Background (0,0): {img1.getpixel((0,0))}")
+    #print("Background (0,0)", img1.getpixel((0,0)))
     arr1 = np.asarray(img1)
     pyplot.imshow(arr1, cmap='gray')
-    print("img1 max", np.max(arr1), "min", np.min(arr1))
+    #print("img1 max", np.max(arr1), "min", np.min(arr1))
     pyplot.show()
-    img2 = image.imread(file2)
+    
+    img2 = Image.open(file2)
+    #img2 = image.imread(file2)
     arr2 = np.asarray(img2)
-    print("img2 max", np.max(arr2), "min", np.min(arr2))
+    #print("img2 max", np.max(arr2), "min", np.min(arr2))
+    print(f"Img2 max {np.max(img2)}, min {np.min(img2)} Background (0,0): {img2.getpixel((0,0))}")
+ 
+    pyplot.imshow(arr2, cmap='gray')
+    pyplot.show()
+    n = arr1 - arr2
+    #print (n)
+    print("diff max", np.max(n), "min", np.min(n))
+    print("mean error", np.mean(np.abs(n)))
+    pyplot.imshow(n, )
+    pyplot.show()
+    # pyplot.imshow(img2)
+    # pyplot.show()
+
+
+
+def show_pic_diff_mask(file1, file2, fmask):
+    "Show picture wit difference in pictures"
+    mask = image.imread(fmask, format='int')
+    #mask[mask==0] = 1
+    #mask[mask==1] = 0
+    mask = ~mask + 2
+    pyplot.imshow(mask, cmap='gray')
+    #print("img1 max", np.max(arr1), "min", np.min(arr1))
+    pyplot.show()
+    return
+    img1 = Image.open(file1)
+    #print("Image1 format", img1.format, img1.size, img1.mode)
+    print(f"Img1 max {np.max(img1)}, min {np.min(img1)} Background (0,0): {img1.getpixel((0,0))}")
+    #print("Background (0,0)", img1.getpixel((0,0)))
+    arr1 = np.asarray(img1)
+    pyplot.imshow(arr1, cmap='gray')
+    #print("img1 max", np.max(arr1), "min", np.min(arr1))
+    pyplot.show()
+    
+    img2 = Image.open(file2)
+    #img2 = image.imread(file2)
+    arr2 = np.asarray(img2)
+    #print("img2 max", np.max(arr2), "min", np.min(arr2))
+    print(f"Img2 max {np.max(img2)}, min {np.min(img2)} Background (0,0): {img2.getpixel((0,0))}")
+ 
     pyplot.imshow(arr2, cmap='gray')
     pyplot.show()
     n = arr1 - arr2
@@ -86,30 +130,12 @@ if __name__ == "__main__":
     print("Starting")
     #use('qtagg')
     #print("Matplotlib backend", get_backend())
-    PICFOLDER = Path(__file__).parent / 'testpictures/compare/pictures'
+    #PICFOLDER = Path(__file__).parent / 'testpictures/compare/pictures'
+    PICFOLDER = Path(__file__).parent / 'testpictures/peters'
 
     print("Compare wrapped image")
-    file1 = PICFOLDER / "analytic/analog_im_wrap1.png"
-    file2 = PICFOLDER / "inf/wrap.png"
-    show_diff(file1, file2)
-
-
-
-
-
-
-#     return
-# print("K")
-# PICFOLDER = Path(__file__).parent / 'testpictures/compare/pictures'
-# file = PICFOLDER / "analytic/kdata.png"
-# file2 = "pictures/inf/nnk.png"
-
-# print(file)
-# show_pic_diff(file, file2)
-
-# print("unwrapped")
-# file = "pictures/analytic/unwrap.png"
-# file2 = "pictures/inf/unwrap.png"
-# show_diff(file, file2)
-
-# show_diff(file, file2)
+    file1 = PICFOLDER / "img1.png"
+    file2 = PICFOLDER / "img2.png"
+    mask = PICFOLDER / "mask.png"
+    #show_diff(file1, file2)
+    show_pic_diff_mask(file1, file2, mask)
