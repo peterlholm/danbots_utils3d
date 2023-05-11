@@ -102,29 +102,38 @@ def split_pcl(file, outpath, split_number=18):
     print("splitnumber", split_number)
     print("Cubic", cubic, "prcube", prcube)
     side = prcube ** (1/3)
-    print("side", side)
-    splitsize = int(side)
+    print(f"side {side} m")
+    #splitsize = int(side)
     #splitsize = int((pcl.get_max_bound()[0] - pcl.get_min_bound()[0])/split_number)
-    size = int(splitsize * overlap)
-    xrange = range(int(pcl.get_min_bound()[0]),int(pcl.get_max_bound()[0]),splitsize)
-    yrange = range(int(pcl.get_min_bound()[1]),int(pcl.get_max_bound()[1]),splitsize)
-    zrange = range(int(pcl.get_min_bound()[2]),int(pcl.get_max_bound()[2]),splitsize)
+    splitsize = (pcl.get_max_bound()[0] - pcl.get_min_bound()[0])/split_number
+    #size = int(splitsize * overlap)
+    size = splitsize * overlap
+    print(f'splitsize {splitsize} size {size}')
+    #xrange = range(int(pcl.get_min_bound()[0]),int(pcl.get_max_bound()[0]),splitsize)
+    #yrange = range(int(pcl.get_min_bound()[1]),int(pcl.get_max_bound()[1]),splitsize)
+    #zrange = range(int(pcl.get_min_bound()[2]),int(pcl.get_max_bound()[2]),splitsize)
     #print ("x-range", xrange)
     print("split-size", splitsize)
 
+    # convert to mm
+
+    xrange = range(-30, 30, 10)
+    yrange = range(-30, 30, 10)
+    zrange =range(10, 40, 10)
     sumpoint = 0
     number = 0
+    size = 0.01
     for x in xrange:
         for y in yrange:
             for z in zrange:
                 #print("xyz", x, y, z)
-                minc = (x,y,z)
-                maxc = (x+size,y+size,z+size)
+                minc = (x/1000,y/1000,z/1000)
+                maxc = (x/1000+size,y/1000+size,z/1000+size)
                 print("box",minc,maxc)
                 box = o3d.geometry.AxisAlignedBoundingBox(minc,maxc)
                 cube = pcl.crop(box)
                 if not cube.has_colors():
-                    cube.paint_uniform_color(colors[number])
+                    cube.paint_uniform_color(colors[number % len(colors)])
                 nopoints = len(cube.points)
                 #colorarr = np.full(1, 44)
                 if nopoints>0:
@@ -167,15 +176,11 @@ def random_split(file, outpath, splitsize=10):
                     number +=1
 
 if __name__ == "__main__":
-    files = ['LJ3','t9UJscan']
-    files = ['LJ3']
-    for f in files:
-        infile = 'out/ply/'+ f + '.ply'
-        outfolder = "out/"+f+'/norm'
-        shutil.rmtree(outfolder)
-        Path(outfolder).mkdir(parents=True, exist_ok=True)
-        split_pcl(infile, outfolder, split_number=27)
-        outfolder = "out/"+f+'/random'
-        Path(outfolder).mkdir(parents=True, exist_ok=True)
-        #random_split(infile, outfolder, splitsize=30)
+    FILE = Path('testdata/pcl/tooth/Bridge1.ply')
+    outfolder = FILE.parent / 'Bridge1'
+    outfolder.mkdir(exist_ok=True)
+    split_pcl(FILE, outfolder, split_number=4*4*4)
+    #outfolder = "out/"+f+'/random'
+    #Path(outfolder).mkdir(parents=True, exist_ok=True)
+    #random_split(infile, outfolder, splitsize=30)
  
