@@ -26,11 +26,28 @@ def gen_color_list(number):
     return colorlist
 
 def crop_pcl(pcl, crop):
+    "Crop pcl"
     minc = crop[0]
     maxc = crop[1]
     print("box",minc,maxc)
     bbox = o3d.geometry.AxisAlignedBoundingBox(minc,maxc)
     box = pcl.crop(bbox)
+    box.estimate_normals()
+    camera = (0,0,0)
+    radius = 1
+    mesh = box.hidden_point_removal(camera, radius)
+
+    mesh[0].compute_triangle_normals()
+    #print(mesh)
+    #print(mesh[1])
+    #print(m)
+    o3d.io.write_triangle_mesh("ud.stl", mesh[0])
+    box.paint_uniform_color((1,0,0))
+    box.colors[0] = (1,1,1)
+    print("has colors", box.has_colors())
+    print("point", box.points[0])
+    print('color', box.colors[0])
+    print('normals', box.normals[0])
     return box
 
 def show_pcl(pcd):
