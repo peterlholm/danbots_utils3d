@@ -87,6 +87,7 @@ def filter_pcl(infile, outfile, procent=0.2):
     o3d.io.write_point_cloud(str(outfile), pcd)
     return True
 
+
 PICTURE_SIZE = 1000
 OBJ_CENTER = [0.0,0.0,22.0]
 CAM_POSITION = [-10.0, -0.0, -25.0]

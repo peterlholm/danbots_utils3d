@@ -22,7 +22,16 @@ def gen_color_list(number):
         #print(rgb)
         colorlist.append(rgb)
     #print(colorlist)
+    colorlist = [(1,0,0),(0,1,0),(0,0,1),(1,1,0),(1,0,1),(0,1,1)]
     return colorlist
+
+def crop_pcl(pcl, crop):
+    minc = crop[0]
+    maxc = crop[1]
+    print("box",minc,maxc)
+    bbox = o3d.geometry.AxisAlignedBoundingBox(minc,maxc)
+    box = pcl.crop(bbox)
+    return box
 
 def show_pcl(pcd):
     "show the pcl for debugging"
@@ -179,7 +188,10 @@ if __name__ == "__main__":
     FILE = Path('testdata/pcl/tooth/Bridge1.ply')
     outfolder = FILE.parent / 'Bridge1'
     outfolder.mkdir(exist_ok=True)
-    split_pcl(FILE, outfolder, split_number=4*4*4)
+    pcl = o3d.io.read_point_cloud(str(FILE))
+    opcl = crop_pcl(pcl,((-1, 0.010, 0),(-0.01,1,20)))
+    o3d.io.write_point_cloud(str(outfolder / "crop.ply"), opcl)
+    #split_pcl(FILE, outfolder, split_number=4*4*4)
     #outfolder = "out/"+f+'/random'
     #Path(outfolder).mkdir(parents=True, exist_ok=True)
     #random_split(infile, outfolder, splitsize=30)
